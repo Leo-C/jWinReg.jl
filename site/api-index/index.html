@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Index - WinReg.jl</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "API Index";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> WinReg.jl</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Index</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">API Index</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#winreg">WinReg</a></li>
+                
+                    <li><a class="toctree-l4" href="#exported">Exported</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">WinReg.jl</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>API Index</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        
+          <a href="https://github.com/leo-c/WinReg.jl" class="icon icon-github"> Edit on GitHub</a>
+        
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="winreg">WinReg</h1>
+<h2 id="exported">Exported</h2>
+<hr />
+<p><a id="method__regcreatekey.1" class="lexicon_definition"></a></p>
+<h4 id="regcreatekeykeyabstractstring">RegCreateKey(key::AbstractString) <a href="#method__regcreatekey.1">¶</a></h4>
+<p>Recursively create specified key. 
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+Return 0 if key is existent, 1 if successful, -1 otherwise</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:190</a></p>
+<hr />
+<p><a id="method__regdelete.1" class="lexicon_definition"></a></p>
+<h4 id="regdeletekeyabstractstring">RegDelete(key::AbstractString) <a href="#method__regdelete.1">¶</a></h4>
+<p>Delete specified <code>key</code>. 
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+<code>view64</code> specifies if key is 64 or 32 bit view (default); see https://msdn.microsoft.com/en-us/library/aa384129.aspx<br />
+If operation has success is returned <code>true</code>, <code>false</code> otherwise</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:80</a></p>
+<hr />
+<p><a id="method__regdelete.2" class="lexicon_definition"></a></p>
+<h4 id="regdeletekeyabstractstring-valuenameabstractstring">RegDelete(key::AbstractString,  valuename::AbstractString) <a href="#method__regdelete.2">¶</a></h4>
+<p>Delete specified <code>valuename</code> under specified <code>key</code>.<br />
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+If operation has success is returned <code>true</code>, <code>false</code> otherwise</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:106</a></p>
+<hr />
+<p><a id="method__regdelete.3" class="lexicon_definition"></a></p>
+<h4 id="regdeletekeyabstractstring-view64bool">RegDelete(key::AbstractString,  view64::Bool) <a href="#method__regdelete.3">¶</a></h4>
+<p>Delete specified <code>key</code>. 
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+<code>view64</code> specifies if key is 64 or 32 bit view (default); see https://msdn.microsoft.com/en-us/library/aa384129.aspx<br />
+If operation has success is returned <code>true</code>, <code>false</code> otherwise</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:80</a></p>
+<hr />
+<p><a id="method__regkeylist.1" class="lexicon_definition"></a></p>
+<h4 id="regkeylistkeyabstractstring">RegKeyList(key::AbstractString) <a href="#method__regkeylist.1">¶</a></h4>
+<p>Return all sukbeys of specified <code>key</code> as string array. 
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+If operation fails is returned <code>nothing</code> (type is <code>Void</code>)</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:243</a></p>
+<hr />
+<p><a id="method__regread.1" class="lexicon_definition"></a></p>
+<h4 id="regreadkeyabstractstring-valuenameabstractstring">RegRead(key::AbstractString,  valuename::AbstractString) <a href="#method__regread.1">¶</a></h4>
+<p>Read a value with <code>valuename</code> into <code>key</code>. 
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').
+Return type in Julia is based onto value type stored in registry; returns <code>nothing</code> (type is <code>Void</code>) if key not found</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:18</a></p>
+<hr />
+<p><a id="method__regvaluelist.1" class="lexicon_definition"></a></p>
+<h4 id="regvaluelistkeyabstractstring">RegValueList(key::AbstractString) <a href="#method__regvaluelist.1">¶</a></h4>
+<p>Return all value names of specified <code>key</code> as tuple array (name, Julia-type).<br />
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+If operation fails is returned <code>nothing</code> (type is <code>Void</code>)</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:294</a></p>
+<hr />
+<p><a id="method__regwrite.1" class="lexicon_definition"></a></p>
+<h4 id="regwritekeyabstractstring-valuenameabstractstring-value">RegWrite(key::AbstractString,  valuename::AbstractString,  value) <a href="#method__regwrite.1">¶</a></h4>
+<p>Write <code>value</code> to <code>valuename</code> under specified <code>key</code>.<br />
+<code>key</code> can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -&gt; 'HKLM').<br />
+Return <code>true</code> if successful, <code>false</code> otherwise</p>
+<p><em>source:</em>
+<a href="file://C:\Users\Leonardo.julia\v0.4\WinReg\src\regfunc.jl">WinReg\src\regfunc.jl:132</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Index"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+
+</body>
+</html>

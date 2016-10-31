@@ -1,0 +1,13 @@
+site_name: WinReg.jl
+
+site_description: LicenseManager.jl, A package for Handle Licenses
+
+repo_url: https://github.com/leo-c/WinReg.jl
+
+pages:
+- [index.md, Index]
+- [api-index.md, API Index]
+
+theme: readthedocs
+
+markdown_extensions: [codehilite]
