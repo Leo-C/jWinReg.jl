@@ -1,6 +1,6 @@
-# WinReg
+# jWinReg
 
-WinReg package.  
+jWinReg package.  
 
 Define main utility for manipulating registry:  
 * read, write and delete values
@@ -9,4 +9,3 @@ Define main utility for manipulating registry:
 
 All functions use Unicode
 
-see documentation @ http://jwinreg.readthedocs.org
