@@ -141,7 +141,7 @@ function regopenkeyex(root::HKEY, subkey::AbstractString, sam::REGSAM)
 	local hk = Ref{HKEY}(0)
 	
 	#UNICODE version; xxxExA is ASCII version, but LPCTRSTR = LPCSTR
-	res = ccall((:RegOpenKeyExW, advapi),
+	res = ccall((:RegOpenKeyExW, advapi), stdcall,
 	  LONG,
 	  (HKEY, LPCWSTR, DWORD, REGSAM, PHKEY),
 	  root, transcode(Cwchar_t, subkey), 0, sam, hk )
@@ -167,7 +167,7 @@ function regclosekey(key::HKEY)
 		return 0
 	end
 	
-	ret = ccall((:RegCloseKey, advapi),
+	ret = ccall((:RegCloseKey, advapi), stdcall,
 	  LONG,
 	  (HKEY, ),
 	  key )

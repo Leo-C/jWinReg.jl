@@ -28,7 +28,7 @@ function regread(key::AbstractString, valuename::AbstractString)
 	hk = regopenkeyex(root, subkey, REG_SAM.KEY_READ)
 	if hk != 0
 		#get buffer dim
-		local res = ccall((:RegQueryValueExW, advapi), 
+		local res = ccall((:RegQueryValueExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD),
 		  hk, transcode(Cwchar_t, valuename), C_NULL, typ, C_NULL, len )
@@ -36,7 +36,7 @@ function regread(key::AbstractString, valuename::AbstractString)
 			buf = Vector{UInt8}(len[])
 			len = Ref{DWORD}(length(buf))
 			
-			res = ccall((:RegQueryValueExW, advapi), 
+			res = ccall((:RegQueryValueExW, advapi), stdcall,
 			  LONG,
 			  (HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD),
 			  hk, transcode(Cwchar_t, valuename), C_NULL, typ, pointer(buf), len )
@@ -94,7 +94,7 @@ function regdelete(key::AbstractString, view64::Bool = false)
 	if hk == 0
 		return false
 	else
-		local res = ccall((:RegDeleteKeyExW, advapi),
+		local res = ccall((:RegDeleteKeyExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, REGSAM, DWORD),
 		  hk, transcode(Cwchar_t ,delkey), (view64 ? REG_SAM.KEY_WOW64_64KEY : REG_SAM.KEY_WOW64_32KEY), 0 )
@@ -119,7 +119,7 @@ function regdelete(key::AbstractString, valuename::AbstractString)
 	if hk == 0
 		return false
 	else
-		local res = ccall((:RegDeleteValueW, advapi),
+		local res = ccall((:RegDeleteValueW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR),
 		  hk, transcode(Cwchar_t, valuename) )
@@ -180,7 +180,7 @@ function regwrite(key::AbstractString, valuename::AbstractString, value::Any)
 	if hk == 0
 		return false
 	end
-	local res = ccall((:RegSetKeyValueW, advapi),
+	local res = ccall((:RegSetKeyValueW, advapi), stdcall,
 	  LONG,
 	  (HKEY, LPCWSTR, LPCWSTR, DWORD, LPBYTE, DWORD ),
 	  hk, C_NULL, transcode(Cwchar_t, valuename), typ, pointer(data), length(data) )
@@ -227,7 +227,7 @@ function regcreatekey(key::AbstractString)
 			return -1
 		end
 		subreg = String(regpath[i])
-		res = ccall((:RegCreateKeyExW, advapi),
+		res = ccall((:RegCreateKeyExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, DWORD, LPCWSTR, DWORD, REGSAM, LPSECURITY_ATTRIBUTES, PHKEY, LPDWORD),
 		  hk, transcode(Cwchar_t, subreg), 0, C_NULL, REG_OPTION.NON_VOLATILE, REG_SAM.KEY_WRITE, C_NULL, newhk, C_NULL )
@@ -260,7 +260,7 @@ function regkeylist(key::AbstractString)
 		numSubKeys = Ref{DWORD}(0)
 		maxLongSubKey = Ref{DWORD}(0)
 		
-		res = ccall((:RegQueryInfoKeyW, advapi),
+		res = ccall((:RegQueryInfoKeyW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCSTR, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, PFILETIME),
 		  hk, C_NULL, C_NULL, C_NULL, numSubKeys, maxLongSubKey, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL )
@@ -274,7 +274,7 @@ function regkeylist(key::AbstractString)
 			idx::DWORD = 0
 			for idx = 0:(numSubKeys[] - 1)
 				len = Ref{DWORD}(length(buf))
-				ccall((:RegEnumKeyExW, advapi),
+				ccall((:RegEnumKeyExW, advapi), stdcall,
 				  LONG,
 				  (HKEY, DWORD, LPCWSTR, LPDWORD, LPDWORD, LPCWSTR, LPDWORD, PFILETIME ),
 				  hk, idx, pointer(buf), len, C_NULL, C_NULL, C_NULL, C_NULL )
@@ -312,7 +312,7 @@ function regvaluelist(key::AbstractString)
 		local numValNames = Ref{DWORD}(0)
 		local maxValName = Ref{DWORD}(0)
 		
-		local res = ccall((:RegQueryInfoKeyW, advapi),
+		local res = ccall((:RegQueryInfoKeyW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCSTR, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, LPDWORD, PFILETIME),
 		  hk, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, numValNames, maxValName, C_NULL, C_NULL, C_NULL )
@@ -327,7 +327,7 @@ function regvaluelist(key::AbstractString)
 			local idx::DWORD = 0
 			for idx = 0:(numValNames[] - 1)
 				len = Ref{DWORD}(length(buf))
-				ccall((:RegEnumValueW, advapi),
+				ccall((:RegEnumValueW, advapi), stdcall,
 				  LONG,
 				  (HKEY, DWORD, LPCWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD ),
 				  hk, idx, pointer(buf), len, C_NULL, typ, C_NULL, C_NULL )
