@@ -5,8 +5,8 @@
 #File: jWinReg.jl
 #Author: Leonardo Cocco
 #Creation Date: 11-04-2016
-#Last update 30-10-2016
-#ver: 0.11
+#Last update 21-11-2016
+#ver: 0.12
 #----------------------------------------------------------
 #----------------------------------------------------------
 
@@ -18,12 +18,12 @@ if is_windows()
 	include("commons.jl")
 
 	include("regfunc.jl")
-	export RegRead,
-		   RegWrite,
-		   RegCreateKey,
-		   RegDelete,
-		   RegKeyList,
-		   RegValueList
+	export regread,
+		   regwrite,
+		   regcreatekey,
+		   regdelete,
+		   regkeylist,
+		   regvaluelist
 end #windows_only
 
 end # module

@@ -6,8 +6,8 @@
 #File: regutils.jl
 #Author: Leonardo Cocco
 #Creation Date: 11-04-2016
-#Last update 22-04-2016
-#ver: 0.10
+#Last update 21-11-2016
+#ver: 0.11
 #----------------------------------------------------------
 #----------------------------------------------------------
 
@@ -15,17 +15,17 @@
 """Read a value with `valuename` into `key`. 
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').
 Return type in Julia is based onto value type stored in registry; returns `nothing` (type is `Void`) if key not found"""
-function RegRead(key::AbstractString, valuename::AbstractString)
-	local root = GetRootHKey(key)
+function regread(key::AbstractString, valuename::AbstractString)
+	local root = getroothkey(key)
 	if root == 0
 		return nothing
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	local hk::HKEY = 0
 	local len = Ref{DWORD}(0)
 	local typ = Ref{DWORD}(0)
 	
-	hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_READ)
+	hk = regopenkeyex(root, subkey, REG_SAM.KEY_READ)
 	if hk != 0
 		#get buffer dim
 		local res = ccall((:RegQueryValueExW, advapi), 
@@ -41,13 +41,13 @@ function RegRead(key::AbstractString, valuename::AbstractString)
 			  (HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD),
 			  hk, transcode(Cwchar_t, valuename), C_NULL, typ, pointer(buf), len )
 			
-			RegCloseKey(hk)
+			regclosekey(hk)
 			
 			if res != ERROR_SUCCESS
 				return nothing
 			end
 		else
-			RegCloseKey(hk)
+			regclosekey(hk)
 			
 			return nothing
 		end
@@ -81,16 +81,16 @@ end
 `view64` specifies if key is 64 or 32 bit view (default); see https://msdn.microsoft.com/en-us/library/aa384129.aspx   
 Cannot delete key with subkeys.  
 If operation has success is returned `true`, `false` otherwise"""
-function RegDelete(key::AbstractString, view64::Bool = false)
-	local root = GetRootHKey(key)
+function regdelete(key::AbstractString, view64::Bool = false)
+	local root = getroothkey(key)
 	if root == 0
 		return false
 	end
-	local skey = split(GetSubKey(key), '\\')
+	local skey = split(getsubkey(key), '\\')
 	local subkey = join(skey[1:(end-1)], "\\")
 	local delkey = String(skey[end])
 	
-	local hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_WRITE)
+	local hk = regopenkeyex(root, subkey, REG_SAM.KEY_WRITE)
 	if hk == 0
 		return false
 	else
@@ -99,7 +99,7 @@ function RegDelete(key::AbstractString, view64::Bool = false)
 		  (HKEY, LPCWSTR, REGSAM, DWORD),
 		  hk, transcode(Cwchar_t ,delkey), (view64 ? REG_SAM.KEY_WOW64_64KEY : REG_SAM.KEY_WOW64_32KEY), 0 )
 		
-		RegCloseKey(hk)
+		regclosekey(hk)
 		
 		return (res == ERROR_SUCCESS)
 	end
@@ -108,14 +108,14 @@ end
 """Delete specified `valuename` under specified `key`.  
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').  
 If operation has success is returned `true`, `false` otherwise"""
-function RegDelete(key::AbstractString, valuename::AbstractString)
-	local root = GetRootHKey(key)
+function regdelete(key::AbstractString, valuename::AbstractString)
+	local root = getroothkey(key)
 	if root == 0
 		return false
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	
-	local hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_WRITE)
+	local hk = regopenkeyex(root, subkey, REG_SAM.KEY_WRITE)
 	if hk == 0
 		return false
 	else
@@ -124,7 +124,7 @@ function RegDelete(key::AbstractString, valuename::AbstractString)
 		  (HKEY, LPCWSTR),
 		  hk, transcode(Cwchar_t, valuename) )
 		
-		RegCloseKey(hk)
+		regclosekey(hk)
 		
 		return (res == ERROR_SUCCESS)
 	end
@@ -133,12 +133,12 @@ end
 """Write `value` to `valuename` under specified `key`.  
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').  
 Return `true` if successful, `false` otherwise"""
-function RegWrite(key::AbstractString, valuename::AbstractString, value::Any)
-	local root = GetRootHKey(key)
+function regwrite(key::AbstractString, valuename::AbstractString, value::Any)
+	local root = getroothkey(key)
 	if root == 0
 		return false
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	
 	local typ::DWORD = 0
 	local data::Vector{UInt8} = Vector{UInt8}()
@@ -176,7 +176,7 @@ function RegWrite(key::AbstractString, valuename::AbstractString, value::Any)
 		return false
 	end
 	
-	local hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_WRITE)
+	local hk = regopenkeyex(root, subkey, REG_SAM.KEY_WRITE)
 	if hk == 0
 		return false
 	end
@@ -191,12 +191,12 @@ end
 """Recursively create specified key. 
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').  
 Return 0 if key is existent, 1 if successful, -1 otherwise"""
-function RegCreateKey(key::AbstractString)
-	local root = GetRootHKey(key)
+function regcreatekey(key::AbstractString)
+	local root = getroothkey(key)
 	if root == 0
 		return -1
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	
 	local creating = false
 	local hk::HKEY = 0
@@ -206,12 +206,12 @@ function RegCreateKey(key::AbstractString)
 	local idx = 0
 	for idx in 1:length(regpath)
 		local currsubkey = join(regpath[1:idx], "\\")
-		hk = RegOpenKeyEx(root, currsubkey, REG_SAM.KEY_READ)
+		hk = regopenkeyex(root, currsubkey, REG_SAM.KEY_READ)
 		if hk == 0
 			break
 		else
 			lastexistent = idx
-			RegCloseKey(hk)
+			regclosekey(hk)
 		end
 	end
 	if lastexistent == length(regpath)
@@ -222,7 +222,7 @@ function RegCreateKey(key::AbstractString)
 	local newhk = Ref{HKEY}(0)
 	for i in (lastexistent+1):length(regpath)
 		currsubkey = join(regpath[1:(i-1)], "\\")
-		hk = RegOpenKeyEx(root, currsubkey, REG_SAM.KEY_WRITE)
+		hk = regopenkeyex(root, currsubkey, REG_SAM.KEY_WRITE)
 		if hk == 0
 			return -1
 		end
@@ -232,11 +232,11 @@ function RegCreateKey(key::AbstractString)
 		  (HKEY, LPCWSTR, DWORD, LPCWSTR, DWORD, REGSAM, LPSECURITY_ATTRIBUTES, PHKEY, LPDWORD),
 		  hk, transcode(Cwchar_t, subreg), 0, C_NULL, REG_OPTION.NON_VOLATILE, REG_SAM.KEY_WRITE, C_NULL, newhk, C_NULL )
 		if res != ERROR_SUCCESS
-			RegCloseKey(hk)
+			regclosekey(hk)
 			return -1
 		end
-		RegCloseKey(newhk[])
-		RegCloseKey(hk)
+		regclosekey(newhk[])
+		regclosekey(hk)
 	end
 	
 	return 1
@@ -245,15 +245,15 @@ end
 """Return all sukbeys of specified `key` as string array. 
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').  
 If operation fails is returned `nothing` (type is `Void`)"""
-function RegKeyList(key::AbstractString)
-	local root = GetRootHKey(key)
+function regkeylist(key::AbstractString)
+	local root = getroothkey(key)
 	if root == 0
 		return nothing
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	local hk::HKEY = 0
 	
-	hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_READ)
+	hk = regopenkeyex(root, subkey, REG_SAM.KEY_READ)
 	if hk == 0
 		return nothing
 	else
@@ -266,7 +266,7 @@ function RegKeyList(key::AbstractString)
 		  hk, C_NULL, C_NULL, C_NULL, numSubKeys, maxLongSubKey, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL )
 		
 		if res != ERROR_SUCCESS
-			RegCloseKey(hk)
+			regclosekey(hk)
 			return nothing
 		else
 			keys = Vector{AbstractString}(numSubKeys[])
@@ -279,7 +279,7 @@ function RegKeyList(key::AbstractString)
 				  (HKEY, DWORD, LPCWSTR, LPDWORD, LPDWORD, LPCWSTR, LPDWORD, PFILETIME ),
 				  hk, idx, pointer(buf), len, C_NULL, C_NULL, C_NULL, C_NULL )
 				if res != ERROR_SUCCESS
-					RegCloseKey(hk)
+					regclosekey(hk)
 					return nothing
 				end
 				
@@ -289,7 +289,7 @@ function RegKeyList(key::AbstractString)
 		end
 	end
 	
-	RegCloseKey(hk)
+	regclosekey(hk)
 	
 	return keys
 end
@@ -297,15 +297,15 @@ end
 """Return all value names of specified `key` as tuple array (name, Julia-type).  
 `key` can be specified using abbreviated form (e.g. 'HKEY_LOCAL_MACHINE' -> 'HKLM').  
 Return array of tuple (<valuename>, <vlauetype>); otherwise `nothing` is returned (type is `Void`)"""
-function RegValueList(key::AbstractString)
-	local root = GetRootHKey(key)
+function regvaluelist(key::AbstractString)
+	local root = getroothkey(key)
 	if root == 0
 		return nothing
 	end
-	local subkey = GetSubKey(key)
+	local subkey = getsubkey(key)
 	local hk::HKEY = 0
 	
-	hk = RegOpenKeyEx(root, subkey, REG_SAM.KEY_READ)
+	hk = regopenkeyex(root, subkey, REG_SAM.KEY_READ)
 	if hk == 0
 		return nothing
 	else
@@ -318,7 +318,7 @@ function RegValueList(key::AbstractString)
 		  hk, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, C_NULL, numValNames, maxValName, C_NULL, C_NULL, C_NULL )
 		
 		if res != ERROR_SUCCESS
-			RegCloseKey(hk)
+			regclosekey(hk)
 			return nothing
 		else
 			local valnames = Vector{Tuple{AbstractString, DataType}}(numValNames[])
@@ -332,18 +332,18 @@ function RegValueList(key::AbstractString)
 				  (HKEY, DWORD, LPCWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD ),
 				  hk, idx, pointer(buf), len, C_NULL, typ, C_NULL, C_NULL )
 				if res != ERROR_SUCCESS
-					RegCloseKey(hk)
+					regclosekey(hk)
 					return nothing
 				end
 				
 				local wbuf = reinterpret(Cwchar_t, buf)
-				local entry = ( transcode(String, wbuf[1:len[]]) , GetType(typ[]) )
+				local entry = ( transcode(String, wbuf[1:len[]]) , gettype(typ[]) )
 				valnames[idx+1] = entry
 			end
 		end
 	end
 	
-	RegCloseKey(hk)
+	regclosekey(hk)
 	
 	return valnames
 end

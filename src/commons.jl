@@ -6,8 +6,8 @@
 #File: commons.jl
 #Author: Leonardo Cocco
 #Creation Date: 11-04-2016
-#Last update 31-10-2016
-#ver: 0.11
+#Last update 21-11-2016
+#ver: 0.12
 #----------------------------------------------------------
 #----------------------------------------------------------
 
@@ -79,7 +79,7 @@ end
 const REG_CREATED_NEW_KEY = 0x00000001
 const REG_OPENED_EXISTING_KEY = 0x00000002
 
-function GetRootHKey(key::AbstractString)
+function getroothkey(key::AbstractString)
 	local pos = search(key, '\\')
 	if pos == 0
 		return convert(HKEY, 0)
@@ -112,7 +112,7 @@ function GetRootHKey(key::AbstractString)
 	end
 end
 
-function GetSubKey(key::AbstractString)
+function getsubkey(key::AbstractString)
 	local pos = search(key,'\\')
 	if pos == 0
 		return ""
@@ -121,7 +121,7 @@ function GetSubKey(key::AbstractString)
 	end
 end
 
-function GetType(typ::UInt32)
+function gettype(typ::UInt32)
 	if typ == REG_TYPE.REG_SZ || typ == REG_TYPE.REG_EXPAND_SZ || typ == REG_TYPE.REG_LINK
 		return AbstractString
 	elseif typ == REG_TYPE.REG_MULTI_SZ
@@ -137,7 +137,7 @@ function GetType(typ::UInt32)
 	end
 end
 
-function RegOpenKeyEx(root::HKEY, subkey::AbstractString, sam::REGSAM)
+function regopenkeyex(root::HKEY, subkey::AbstractString, sam::REGSAM)
 	local hk = Ref{HKEY}(0)
 	
 	#UNICODE version; xxxExA is ASCII version, but LPCTRSTR = LPCSTR
@@ -153,7 +153,7 @@ function RegOpenKeyEx(root::HKEY, subkey::AbstractString, sam::REGSAM)
 	end
 end
 
-function RegCloseKey(key::HKEY)
+function regclosekey(key::HKEY)
 	if key == ROOT_HKEY.HKEY_CLASSES_ROOT ||
 	  key == ROOT_HKEY.HKEY_CURRENT_CONFIG ||
 	  key == ROOT_HKEY.HKEY_CURRENT_USER ||
