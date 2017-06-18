@@ -6,8 +6,8 @@
 #File: commons.jl
 #Author: Leonardo Cocco
 #Creation Date: 11-04-2016
-#Last update 21-11-2016
-#ver: 0.12
+#Last update 18-06-2017
+#ver: 0.13
 #----------------------------------------------------------
 #----------------------------------------------------------
 
@@ -144,7 +144,7 @@ function regopenkeyex(root::HKEY, subkey::AbstractString, sam::REGSAM)
 	res = ccall((:RegOpenKeyExW, advapi), stdcall,
 	  LONG,
 	  (HKEY, LPCWSTR, DWORD, REGSAM, PHKEY),
-	  root, transcode(Cwchar_t, subkey), 0, sam, hk )
+	  root, string2wchar(subkey), 0, sam, hk )
 	
 	if res == ERROR_SUCCESS
 		return hk[]

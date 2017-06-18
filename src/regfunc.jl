@@ -6,8 +6,8 @@
 #File: regutils.jl
 #Author: Leonardo Cocco
 #Creation Date: 11-04-2016
-#Last update 21-11-2016
-#ver: 0.11
+#Last update 18-06-2017
+#ver: 0.12
 #----------------------------------------------------------
 #----------------------------------------------------------
 
@@ -31,7 +31,7 @@ function regread(key::AbstractString, valuename::AbstractString)
 		local res = ccall((:RegQueryValueExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD),
-		  hk, transcode(Cwchar_t, valuename), C_NULL, typ, C_NULL, len )
+		  hk, string2wchar(valuename), C_NULL, typ, C_NULL, len )
 		if res == ERROR_SUCCESS
 			buf = Vector{UInt8}(len[])
 			len = Ref{DWORD}(length(buf))
@@ -39,7 +39,7 @@ function regread(key::AbstractString, valuename::AbstractString)
 			res = ccall((:RegQueryValueExW, advapi), stdcall,
 			  LONG,
 			  (HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD),
-			  hk, transcode(Cwchar_t, valuename), C_NULL, typ, pointer(buf), len )
+			  hk, string2wchar(valuename), C_NULL, typ, pointer(buf), len )
 			
 			regclosekey(hk)
 			
@@ -97,7 +97,7 @@ function regdelete(key::AbstractString, view64::Bool = false)
 		local res = ccall((:RegDeleteKeyExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, REGSAM, DWORD),
-		  hk, transcode(Cwchar_t ,delkey), (view64 ? REG_SAM.KEY_WOW64_64KEY : REG_SAM.KEY_WOW64_32KEY), 0 )
+		  hk, string2wchar(delkey), (view64 ? REG_SAM.KEY_WOW64_64KEY : REG_SAM.KEY_WOW64_32KEY), 0 )
 		
 		regclosekey(hk)
 		
@@ -122,7 +122,7 @@ function regdelete(key::AbstractString, valuename::AbstractString)
 		local res = ccall((:RegDeleteValueW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR),
-		  hk, transcode(Cwchar_t, valuename) )
+		  hk, string2wchar(valuename) )
 		
 		regclosekey(hk)
 		
@@ -183,7 +183,7 @@ function regwrite(key::AbstractString, valuename::AbstractString, value::Any)
 	local res = ccall((:RegSetKeyValueW, advapi), stdcall,
 	  LONG,
 	  (HKEY, LPCWSTR, LPCWSTR, DWORD, LPBYTE, DWORD ),
-	  hk, C_NULL, transcode(Cwchar_t, valuename), typ, pointer(data), length(data) )
+	  hk, C_NULL, string2wchar(valuename), typ, pointer(data), length(data) )
 	
 	return (res == ERROR_SUCCESS)
 end
@@ -230,7 +230,7 @@ function regcreatekey(key::AbstractString)
 		res = ccall((:RegCreateKeyExW, advapi), stdcall,
 		  LONG,
 		  (HKEY, LPCWSTR, DWORD, LPCWSTR, DWORD, REGSAM, LPSECURITY_ATTRIBUTES, PHKEY, LPDWORD),
-		  hk, transcode(Cwchar_t, subreg), 0, C_NULL, REG_OPTION.NON_VOLATILE, REG_SAM.KEY_WRITE, C_NULL, newhk, C_NULL )
+		  hk, string2wchar(subreg), 0, C_NULL, REG_OPTION.NON_VOLATILE, REG_SAM.KEY_WRITE, C_NULL, newhk, C_NULL )
 		if res != ERROR_SUCCESS
 			regclosekey(hk)
 			return -1
